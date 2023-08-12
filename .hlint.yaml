@@ -1,0 +1,16 @@
+- ignore:
+    name: "Avoid lambda"
+- ignore:
+    name: "Use const"
+- ignore:
+    name: "Use ++"
+- ignore:
+    name: "Eta reduce"
+- ignore:
+    name: "Use first"
+- ignore:
+    name: "Redundant if"
+- ignore:
+    name: "Redundant lambda"
+- ignore:
+    name: "Use when"
