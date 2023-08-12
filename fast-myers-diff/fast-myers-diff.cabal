@@ -9,8 +9,8 @@ version:        0.0.0
 synopsis:       A fast implementation of the Myers diff algorithm.
 description:    A fast implementation of the diffing algorithm described in 'An O(ND) Difference Algorithm and Its Variations' by Eugene W. Myers.
 category:       Testing
-homepage:       https://github.com/NorfairKing/sydtest#readme
-bug-reports:    https://github.com/NorfairKing/sydtest/issues
+homepage:       https://github.com/NorfairKing/fast-myers-diff#readme
+bug-reports:    https://github.com/NorfairKing/fast-myers-diff/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
 copyright:      Copyright (c) 2023 Tom Sydney Kerckhove
@@ -22,7 +22,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/NorfairKing/sydtest
+  location: https://github.com/NorfairKing/fast-myers-diff
 
 library
   exposed-modules:
