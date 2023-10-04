@@ -1,41 +1,14 @@
 final: prev:
-with final.haskell.lib;
+let
+  overrides = (final.callPackage ./overrides.nix { });
+  addOverrides = old: { overrides = final.lib.composeExtensions (old.overrides or (_: _: { })) overrides; };
+in
 {
 
-  haskellPackages = prev.haskellPackages.override (old: {
-    overrides = final.lib.composeExtensions (old.overrides or (_: _: { }))
-      (
-        self: super:
-          with final.lib;
-          with final.haskell.lib;
-
-          {
-            fast-myers-diff =
-              buildFromSdist (
-                overrideCabal (self.callPackage (../fast-myers-diff) { })
-                  (old: {
-                    doBenchmark = true;
-                    configureFlags = (old.configureFlags or [ ]) ++ [
-                      # Optimisations
-                      "--ghc-options=-O2"
-                      # Extra warnings
-                      "--ghc-options=-Wall"
-                      "--ghc-options=-Wincomplete-uni-patterns"
-                      "--ghc-options=-Wincomplete-record-updates"
-                      "--ghc-options=-Wpartial-fields"
-                      "--ghc-options=-Widentities"
-                      "--ghc-options=-Wredundant-constraints"
-                      "--ghc-options=-Wcpp-undef"
-                      "--ghc-options=-Wunused-packages"
-                      "--ghc-options=-Werror"
-                      "--ghc-options=-Wno-deprecations"
-                    ];
-                    # Ugly hack because we can't just add flags to the 'test' invocation.
-                    # Show test output as we go, instead of all at once afterwards.
-                    testTarget = (old.testTarget or "") + " --show-details=direct";
-                  })
-              );
-          }
-      );
-  });
+  haskell = prev.haskell // {
+    packages = builtins.mapAttrs
+      (compiler: haskellPackages: haskellPackages.override addOverrides)
+      prev.haskell.packages;
+  };
+  haskellPackages = prev.haskellPackages.override addOverrides;
 }
