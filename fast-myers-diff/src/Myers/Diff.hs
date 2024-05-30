@@ -70,7 +70,7 @@ bimapPolyDiff f g = \case
 -- |
 --
 -- For backward compatibility with 'Diff', use more specific functions if you can.
-getDiff :: Eq a => [a] -> [a] -> [Diff a]
+getDiff :: (Eq a) => [a] -> [a] -> [Diff a]
 getDiff = getDiffBy (==)
 
 -- |
@@ -82,7 +82,7 @@ getDiffBy eq as bs = V.toList (getVectorDiffBy eq (V.fromList as) (V.fromList bs
 -- |
 --
 -- For backward compatibility with 'Diff', use more specific functions if you can.
-getGroupedDiff :: Eq a => [a] -> [a] -> [Diff [a]]
+getGroupedDiff :: (Eq a) => [a] -> [a] -> [Diff [a]]
 getGroupedDiff = getGroupedDiffBy (==)
 
 -- |
@@ -120,7 +120,7 @@ getGroupedStringDiff actual expected = V.toList $ V.map (mapDiff V.toList) $ get
 -- | Diff two 'Vector's
 --
 -- Prefer 'getGroupedVectorDiff' for performance reasons.
-getVectorDiff :: Eq a => Vector a -> Vector a -> Vector (Diff a)
+getVectorDiff :: (Eq a) => Vector a -> Vector a -> Vector (Diff a)
 getVectorDiff = getVectorDiffBy (==)
 
 -- | Diff two 'Vector's with different types using a custom equality operator
@@ -130,7 +130,7 @@ getVectorDiffBy :: forall a b. (a -> b -> Bool) -> Vector a -> Vector b -> Vecto
 getVectorDiffBy eq old new = computeDiffFromEditScript old new (getEditScriptBy eq old new)
 
 -- | Diff two 'Vector's with grouped results
-getGroupedVectorDiff :: Eq a => Vector a -> Vector a -> Vector (Diff (Vector a))
+getGroupedVectorDiff :: (Eq a) => Vector a -> Vector a -> Vector (Diff (Vector a))
 getGroupedVectorDiff = getGroupedVectorDiffBy (==)
 
 -- | Diff two 'Vector's with grouped results using a custom equality operator
@@ -138,7 +138,7 @@ getGroupedVectorDiffBy :: forall a b. (a -> b -> Bool) -> Vector a -> Vector b -
 getGroupedVectorDiffBy eq old new = computeGroupedDiffFromEditScript old new (getEditScriptBy eq old new)
 
 -- | Compute the edit script to turn a given 'Vector' into the second given 'Vector'
-getEditScript :: forall a. Eq a => Vector a -> Vector a -> Vector Edit
+getEditScript :: forall a. (Eq a) => Vector a -> Vector a -> Vector Edit
 getEditScript = getEditScriptBy (==)
 
 -- | Compute the edit script to turn a given 'Vector' into the second given 'Vector' with a custom equality relation
@@ -475,18 +475,18 @@ computeDiffFromEditScript old new editSteps = V.create $ do
 data Edit
   = -- | Delete from the old vector
     Delete
+      -- position in the old vector
       Int
-      -- ^ position in the old vector
+      -- number of items to delete
       Int
-      -- ^ number of items to delete
   | -- | Insert into the old vector
     Insert
+      -- position in the old vector
       Int
-      -- ^ position in the old vector
+      -- position in the new vector
       Int
-      -- ^ position in the new vector
+      -- number of items to insert
       Int
-      -- ^ number of items to insert
   deriving (Show, Eq, Ord)
 
 oldPosition :: Edit -> Int
@@ -508,13 +508,13 @@ sliceIx :: Int -> Int -> Vector a -> Vector a
 sliceIx start end = V.slice start (end - start)
 
 -- | Short-circuiting monadic (&&)
-(&&.) :: Applicative m => Bool -> m Bool -> m Bool
+(&&.) :: (Applicative m) => Bool -> m Bool -> m Bool
 (&&.) b1 mkB2 = do
   if b1
     then mkB2
     else pure False
 
-forUntilJust :: Monad m => [a] -> (a -> m (Maybe b)) -> m (Maybe b)
+forUntilJust :: (Monad m) => [a] -> (a -> m (Maybe b)) -> m (Maybe b)
 forUntilJust [] _ = pure Nothing
 forUntilJust (a : rest) func = do
   mRes <- func a
