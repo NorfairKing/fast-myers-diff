@@ -1,9 +1,10 @@
 {
   description = "fast-myers-diff";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-23.11";
+    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-24.05";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     horizon-advance.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-advance";
+    nixpkgs-23_11.url = "github:NixOS/nixpkgs?ref=nixos-23.11";
     nixpkgs-23_05.url = "github:NixOS/nixpkgs?ref=nixos-23.05";
     nixpkgs-22_11.url = "github:NixOS/nixpkgs?ref=nixos-22.11";
     nixpkgs-22_05.url = "github:NixOS/nixpkgs?ref=nixos-22.05";
@@ -13,6 +14,7 @@
   outputs =
     { self
     , nixpkgs
+    , nixpkgs-23_11
     , nixpkgs-23_05
     , nixpkgs-22_11
     , nixpkgs-22_05
@@ -40,6 +42,7 @@
           backwardCompatibilityCheckFor = nixpkgs: (haskellPackagesFor nixpkgs).fast-myers-diff;
           allNixpkgs = {
             inherit
+              nixpkgs-23_11
               nixpkgs-23_05
               nixpkgs-22_11
               nixpkgs-22_05
@@ -68,18 +71,11 @@
         packages = p: [ p.fast-myers-diff ];
         withHoogle = true;
         doBenchmark = true;
-        buildInputs = (with pkgs; [
+        buildInputs = with pkgs; [
           cabal-install
           niv
           zlib
-        ]) ++ (with pre-commit-hooks.packages.${system};
-          [
-            hlint
-            hpack
-            nixpkgs-fmt
-            ormolu
-            cabal2nix
-          ]);
+        ] ++ self.checks.${system}.pre-commit.enabledPackages;
         shellHook = self.checks.${system}.pre-commit.shellHook;
       };
     };
