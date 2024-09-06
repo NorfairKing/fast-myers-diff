@@ -1,9 +1,9 @@
-{ mkDerivation, base, dlist, hspec, lib, text, vector }:
+{ mkDerivation, base, deepseq, dlist, hspec, lib, text, vector }:
 mkDerivation {
   pname = "fast-myers-diff";
-  version = "0.0.0";
+  version = "0.0.1";
   src = ./.;
-  libraryHaskellDepends = [ base dlist text vector ];
+  libraryHaskellDepends = [ base deepseq dlist text vector ];
   testHaskellDepends = [ base hspec text vector ];
   homepage = "https://github.com/NorfairKing/fast-myers-diff#readme";
   description = "A fast implementation of the Myers diff algorithm";
