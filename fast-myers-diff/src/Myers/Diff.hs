@@ -2,6 +2,7 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# OPTIONS_GHC -Wno-unused-imports -Werror=name-shadowing #-}
+{-# LANGUAGE DeriveAnyClass #-}
 
 -- | Myers Diff
 --
@@ -48,6 +49,8 @@ import Data.Vector (Vector, (!))
 import qualified Data.Vector as V
 import Data.Vector.Mutable (MVector)
 import qualified Data.Vector.Mutable as MV
+import Control.DeepSeq (NFData)
+import GHC.Generics
 
 type Diff a = PolyDiff a a
 
@@ -59,7 +62,7 @@ mapDiff f = bimapPolyDiff f f
 -- of equality that doesn't check all data (for example, if you are using a
 -- custom equality relation to only perform equality on side of a tuple).
 data PolyDiff a b = First a | Second b | Both a b
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic, NFData)
 
 bimapPolyDiff :: (a -> c) -> (b -> d) -> PolyDiff a b -> PolyDiff c d
 bimapPolyDiff f g = \case

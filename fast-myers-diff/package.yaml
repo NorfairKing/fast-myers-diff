@@ -36,3 +36,4 @@ tests:
     - hspec
     - text
     - vector
+    - deepseq
