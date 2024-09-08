@@ -1,5 +1,5 @@
 name: fast-myers-diff
-version: 0.0.0
+version: 0.0.1
 github: "NorfairKing/fast-myers-diff"
 license: MIT
 license-file: LICENSE
@@ -12,6 +12,7 @@ description: A fast implementation of the diffing algorithm described in 'An O(N
 
 extra-source-files:
 - LICENSE
+- Changelog.md
 
 dependencies:
 - base >= 4.7 && < 5
