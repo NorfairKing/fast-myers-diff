@@ -22,6 +22,12 @@ module Myers.Diff
     getVectorDiffBy,
     getGroupedVectorDiffBy,
 
+    -- * Distance
+    getTextEditDistance,
+    getStringEditDistance,
+    getEditDistance,
+    getEditDistanceBy,
+
     -- ** Internals
     Edit (..),
     getEditScript,
@@ -140,6 +146,30 @@ getGroupedVectorDiff = getGroupedVectorDiffBy (==)
 -- | Diff two 'Vector's with grouped results using a custom equality operator
 getGroupedVectorDiffBy :: forall a b. (a -> b -> Bool) -> Vector a -> Vector b -> Vector (PolyDiff (Vector a) (Vector b))
 getGroupedVectorDiffBy eq old new = computeGroupedDiffFromEditScript old new (getEditScriptBy eq old new)
+
+-- | 'Text edit distance
+getTextEditDistance :: Text -> Text -> Word
+getTextEditDistance actual expected = getStringEditDistance (T.unpack actual) (T.unpack expected)
+
+-- | 'String' edit distance
+getStringEditDistance :: String -> String -> Word
+getStringEditDistance actual expected = getEditDistance (V.fromList actual) (V.fromList expected)
+
+-- | Compute the total size of the edit script vector from 'getEditScript.
+getEditDistance :: (Eq a) => Vector a -> Vector a -> Word
+getEditDistance = getEditDistanceBy (==)
+
+-- | Compute the total size of the edit script vector from 'getEditScriptBy'.
+getEditDistanceBy :: (a -> b -> Bool) -> Vector a -> Vector b -> Word
+getEditDistanceBy eq old new =
+  -- This 'fromIntegral' is safe because you'd need a ridiculously large edit
+  -- script for it to cause trouble, and that would crash the program before
+  -- 'fromIntegral' could.
+  (fromIntegral :: Int -> Word) $ sum $ V.map editCost $ getEditScriptBy eq old new
+  where
+    editCost = \case
+      Delete _ c -> c
+      Insert _ _ c -> c
 
 -- | Compute the edit script to turn a given 'Vector' into the second given 'Vector'
 getEditScript :: forall a. (Eq a) => Vector a -> Vector a -> Vector Edit

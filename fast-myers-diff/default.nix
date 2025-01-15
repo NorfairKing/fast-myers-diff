@@ -1,7 +1,7 @@
 { mkDerivation, base, deepseq, dlist, hspec, lib, text, vector }:
 mkDerivation {
   pname = "fast-myers-diff";
-  version = "0.0.1";
+  version = "0.0.2";
   src = ./.;
   libraryHaskellDepends = [ base deepseq dlist text vector ];
   testHaskellDepends = [ base hspec text vector ];

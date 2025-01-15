@@ -85,6 +85,13 @@ spec = do
     exampleSpec "foofoo" "foo" [Delete 1 1, Delete 3 1, Delete 5 1] [Both 'f' 'f', First 'o', Both 'o' 'o', First 'f', Both 'o' 'o', First 'o']
     exampleSpec "foo" "foofoo" [Insert 1 1 1, Insert 2 3 1, Insert 3 5 1] [Both 'f' 'f', Second 'o', Both 'o' 'o', Second 'f', Both 'o' 'o', Second 'o']
 
+  describe "getStringEditDistance" $ do
+    prop "is 0 for identical strings" $ \t ->
+      getStringEditDistance t t `shouldBe` 0
+
+    it "returns 6 for these two completely different strings" $
+      getStringEditDistance "abc" "def" `shouldBe` 6
+
   describe "getVectorDiff" $ do
     let exampleSpec :: Vector Char -> Vector Char -> Vector (Diff Char) -> Spec
         exampleSpec old new expected =
