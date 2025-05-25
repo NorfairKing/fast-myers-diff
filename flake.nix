@@ -1,9 +1,10 @@
 {
   description = "fast-myers-diff";
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-25.05";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     horizon-advance.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-advance";
+    nixpkgs-24_11.url = "github:NixOS/nixpkgs?ref=nixos-24.11";
     nixpkgs-24_05.url = "github:NixOS/nixpkgs?ref=nixos-24.05";
     nixpkgs-23_11.url = "github:NixOS/nixpkgs?ref=nixos-23.11";
     nixpkgs-23_05.url = "github:NixOS/nixpkgs?ref=nixos-23.05";
@@ -12,6 +13,7 @@
   outputs =
     { self
     , nixpkgs
+    , nixpkgs-24_11
     , nixpkgs-24_05
     , nixpkgs-23_11
     , nixpkgs-23_05
@@ -38,6 +40,7 @@
           backwardCompatibilityCheckFor = nixpkgs: (haskellPackagesFor nixpkgs).fast-myers-diff;
           allNixpkgs = {
             inherit
+              nixpkgs-24_11
               nixpkgs-24_05
               nixpkgs-23_11
               nixpkgs-23_05;
