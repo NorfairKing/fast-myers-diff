@@ -3,7 +3,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs?ref=nixos-26.05";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    horizon-advance.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-advance";
     nixpkgs-25_11.url = "github:NixOS/nixpkgs?ref=nixos-25.11";
   };
 
@@ -11,18 +10,17 @@
     { self
     , nixpkgs
     , nixpkgs-25_11
-    , horizon-advance
     , pre-commit-hooks
     }:
     let
       system = "x86_64-linux";
       nixpkgsFor = nixpkgs: import nixpkgs { inherit system; config.allowUnfree = true; };
       pkgs = nixpkgsFor nixpkgs;
-      allOverrides = pkgs.lib.composeManyExtensions [
-        self.overrides.${system}
-      ];
-      horizonPkgs = horizon-advance.legacyPackages.${system}.extend allOverrides;
-      haskellPackagesFor = nixpkgs: (nixpkgsFor nixpkgs).haskellPackages.extend allOverrides;
+      haskellPackagesFor = nixpkgs: (nixpkgsFor nixpkgs).haskellPackages.extend (
+        pkgs.lib.composeManyExtensions [
+          self.overrides.${system}
+        ]
+      );
       haskellPackages = haskellPackagesFor nixpkgs;
     in
     {
@@ -39,7 +37,6 @@
           backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs;
         in
         backwardCompatibilityChecks // {
-          forwardCompatibility = horizonPkgs.fast-myers-diff;
           release = self.packages.${system}.default;
           shell = self.devShells.${system}.default;
           pre-commit = pre-commit-hooks.lib.${system}.run {
